@@ -1,0 +1,13 @@
+# Mac system files
+.DS_Store
+
+# Secrets - never commit
+.env
+*.pem
+*.key
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
