@@ -1,4 +1,4 @@
-# Day 2: Git, GitHub and SSH
+# Day 2: Git, GitHub, SSH and a Safe AI Assistant
 
 > Written so a complete beginner can follow along on their own machine.
 
@@ -17,6 +17,7 @@
 | SSH key | A secure way to prove who you are to GitHub, without typing a password |
 | `.gitignore` | A list of files Git must never save, such as secrets |
 | Pull request | The way teams review and approve changes before they go live |
+| Claude Code safety | Rules and locks that stop an AI assistant touching your secrets |
 
 ## Why this matters for cloud engineering
 
@@ -269,34 +270,96 @@ git branch -d add-new-guide
 
 ---
 
-## 🤖 Using AI in cloud engineering: a tool, not a crutch
+## Step 6: Set up an AI assistant safely (Claude Code)
 
-AI assistants are now common in cloud teams. They're useful, but treat them like any other tool: something you **check**, not something you **trust blindly**.
+AI assistants like **Claude Code** can read your files and run commands inside your project. That's handy, but it also means they could read a secret by accident, or run something that costs money. So before using one, give it **rules** and **locks**.
 
-**What AI is good for:**
-- Explaining an error message or an unfamiliar command
-- Drafting a first version of a script, Terraform file or document
-- Reviewing work and spotting things you missed
-- Speeding up repetitive tasks you already understand
+Real-life example: you've hired a cleaner.
 
-**Why you shouldn't rely on it:**
-- **It can be confidently wrong**, especially about newer tool versions.
-- **Cloud mistakes cost money or cause security problems.** A wrong `terraform destroy`, an open security group or a leaked key is your responsibility, not the AI's.
-- **You have to understand it to check it.** If you can't explain what a command does, don't run it.
-- **Incidents and interviews need you.** When something breaks at 2am, you need to know how to troubleshoot it.
+| Layer | File | Real-life version |
+|---|---|---|
+| 📝 Instructions | `CLAUDE.md` | A note on the fridge: "Please don't go in the office". Usually followed, but not forced. |
+| 🔒 Locks | `.claude/settings.json` | Actually locking the office and the safe. Enforced by Claude Code. |
+| 👀 You | Permission prompts | Checking what the cleaner wants to do before you say yes |
 
-**Rules for using AI safely:**
+### 6a. Write the instructions: `CLAUDE.md`
 
-| Rule | Why |
+Create `CLAUDE.md` in the top of your repo. Keep it short and clear, for example:
+
+```
+# Rules for Claude in this repo
+- Explain every command simply, with a real-life example.
+- Give hints first when something is new.
+- Never run terraform apply or terraform destroy.
+- Never create, change or delete AWS resources.
+- Never read ~/.aws, ~/.ssh, .env, *.tfstate or *.tfvars files, or private keys.
+```
+
+### 6b. Fit the locks: `.claude/settings.json`
+
+```bash
+mkdir -p .claude
+nano .claude/settings.json
+```
+
+```json
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Read(~/.aws/**)",
+      "Read(~/.ssh/**)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(*.tfstate)",
+      "Read(*.tfstate.*)",
+      "Read(*.tfvars)",
+      "Read(*.pem)",
+      "Read(*.key)",
+      "Bash(terraform apply *)",
+      "Bash(terraform destroy *)",
+      "Bash(aws *)",
+      "Bash(* ~/.ssh*)",
+      "Bash(* ~/.aws*)",
+      "Bash(* $HOME/.ssh*)",
+      "Bash(* $HOME/.aws*)"
+    ]
+  }
+}
+```
+
+| Rule | What it blocks |
 |---|---|
-| Understand before running | Know what each part of a command does |
-| Never paste secrets | No passwords, keys, tokens, recovery codes or private keys |
-| Verify the result | Check with `git status`, `ls`, `terraform plan` and so on |
-| Use the official docs | AWS, Terraform and GitHub docs are the source of truth |
-| AI suggests, you decide | Anything that changes or deletes real resources is your call |
-| Do the core work yourself while learning | That's how the skills stick |
+| `Read(~/.aws/**)`, `Read(~/.ssh/**)` | Claude reading your secret folders (`**` = everything inside) |
+| `Read(.env)`, `Read(*.pem)`, `Read(*.key)`… | Claude reading files that usually hold passwords or keys |
+| `Read(*.tfstate)`, `Read(*.tfvars)` | Claude reading Terraform files that can hold secrets |
+| `Bash(terraform apply *)`, `Bash(terraform destroy *)` | Building or deleting cloud resources |
+| `Bash(aws *)` | Any AWS command at all |
+| `Bash(* ~/.ssh*)` and friends | Using a terminal command (like `cat`) to peek into secret folders |
 
-**Example:** an AI review can spot that your Git email is your personal address instead of your noreply one. But you still need to understand **why** it matters (it's public on every commit) and make the fix yourself.
+**Check the file has no typos:**
+
+```bash
+jq . .claude/settings.json
+```
+
+If `jq` prints it neatly, it's valid. If it shows an error, look for a missing or extra comma. One mistake and Claude Code ignores the file.
+
+### 6c. Test the lock (don't just assume)
+
+Open the repo in VS Code, start Claude Code, and ask it to **try** reading `~/.ssh/id_ed25519.pub`. Use the **public** key on purpose: if the lock fails, nothing secret leaks.
+
+**Pass:**
+
+```
+File is in a directory that is denied by your permission settings.
+```
+
+> 💡 If Claude simply **refuses** because of `CLAUDE.md`, that tests the note, not the lock. Tell it this is a one-off test of your deny rules and ask it to try, so you can see the lock in action.
+
+**Honest limit:** these rules match the words of a command, so an unusual command could still get past. That's why you stay the last line of defence: read every permission prompt, and never choose "don't ask again" for anything near your secrets.
+
+For more on how AI fits into learning cloud engineering, see [How AI Is Used in This Guide](how-ai-is-used.md).
 
 ---
 
@@ -308,6 +371,7 @@ AI assistants are now common in cloud teams. They're useful, but treat them like
 - [ ] I have an SSH key with a passphrase, added to GitHub, and `ssh -T` works
 - [ ] My repo has a `.gitignore`, a README and meaningful commits
 - [ ] I've pushed to GitHub and merged my own pull request
+- [ ] Claude Code has a `CLAUDE.md` and a tested `.claude/settings.json`
 
 ## Lessons learned
 
@@ -315,7 +379,10 @@ AI assistants are now common in cloud teams. They're useful, but treat them like
 - **Read warnings.** Git often tells you exactly what's wrong.
 - **Check, act, check again.** Run `pwd`, `ls` or `git status` before and after changes.
 - **Protect secrets from day one.** Use `.gitignore`, private emails and passphrases.
+- **Test your locks.** A rule you haven't tested is only a guess.
+
+New word or command you don't recognise? See the [Commands and Jargon Reference](reference.md).
 
 ## Next: Day 3
 
-Continue setting up the engineering workstation and connect an AI coding assistant safely, with rules that keep it away from secrets.
+More workstation setup, and the first steps towards working with AWS safely.

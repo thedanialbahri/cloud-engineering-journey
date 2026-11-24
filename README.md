@@ -1,69 +1,83 @@
 # Cloud Engineering: A Hands-On Guide from Zero
 
-A step-by-step, beginner-friendly guide to the core skills of a **junior Cloud Engineer**: the terminal, Git, **AWS**, **Terraform** and **automation** with Bash, Python and GitHub Actions.
+A friendly, step-by-step guide to the skills a **junior Cloud Engineer** uses every day: the terminal, Git, **AWS**, **Terraform** and **automation**.
 
-Every guide is written so you can **follow along on your own machine**, with plain-English explanations of what each command does and why it matters.
+Every guide is written so you can follow along on your own computer. Each command is explained in plain English, with real-life examples, so you understand **why** it works and aren't just copying it.
 
 ---
 
 ## Who this is for
 
-- Beginners moving into cloud from IT support, helpdesk or another career
-- Anyone who wants to learn by **doing**, not just watching videos
-- People who want to understand **why** a command works, not just copy it
+- Anyone starting out in cloud, whether from IT support, helpdesk or a completely different job
+- People who learn best by **doing**
+- People who want to understand what a command does before they run it
 
-No prior cloud experience is needed.
+You don't need any cloud experience to start.
 
-## How to use this repo
+## How to use this guide
 
-1. Start with **Day 1** and work through the guides in order. Each one builds on the last.
-2. Type the commands yourself rather than copying and pasting. It sticks better.
-3. Read the output after every command. The answer (or the error) is usually right there.
-4. Try the **challenges** before opening the answers.
+1. Start with **Day 1** and go in order. Each day builds on the one before.
+2. Type the commands yourself. It sticks better than copying and pasting.
+3. Read what the terminal says after each command. The answer (or the error) is usually right there.
+4. Have a go at the **challenges** before you open the answers.
+5. Stuck on a word or command? Look it up in the [Commands and Jargon Reference](docs/reference.md).
 
 ## Guides
 
-| # | Guide | What you'll learn |
+| Day | Guide | What you'll learn |
 |---|---|---|
-| 1 | [Terminal, Permissions, Homebrew and jq](docs/day-01-terminal-homebrew-jq.md) | Terminal basics, reading file permissions, installing tools, working with JSON |
-| 2 | [Git, GitHub and SSH](docs/day-02-git-github-ssh.md) | Commits, branches, pull requests, securing GitHub, SSH keys, `.gitignore` |
+| 1 | [Terminal, Permissions, Homebrew and jq](docs/day-01-terminal-homebrew-jq.md) | Moving around the terminal, reading file permissions, installing tools, working with JSON |
+| 2 | [Git, GitHub, SSH and a Safe AI Assistant](docs/day-02-git-github-ssh.md) | Commits, branches, pull requests, securing GitHub, SSH keys, `.gitignore`, setting up Claude Code safely |
 
-More guides are added as the programme progresses.
+More guides are added as the course goes on.
 
-## Roadmap
+## Extra pages
+
+| Page | What's in it |
+|---|---|
+| [Commands and Jargon Reference](docs/reference.md) | Every command and term used so far, explained simply with examples |
+| [How AI Is Used in This Guide](docs/how-ai-is-used.md) | How AI helps with learning, where it doesn't, and the safety rules around it |
+
+## What's coming
 
 | Stage | Focus |
 |---|---|
-| 1 | Linux, networking, Git, cloud fundamentals |
-| 2 | AWS compute, storage, networking, IAM and security |
-| 3 | Terraform: modules, state, repeatable deployments |
-| 4 | Python, Bash, APIs, GitHub Actions and CI/CD |
-| 5 | Docker, monitoring, logging and resilience |
-| 6 | End-to-end projects that bring it all together |
+| 1 | Linux, networking, Git and cloud basics |
+| 2 | AWS: servers, storage, networking, users and security |
+| 3 | Terraform: building cloud setups from code |
+| 4 | Automation: Python, Bash, APIs and GitHub Actions |
+| 5 | Docker, monitoring, logging and keeping things running |
+| 6 | Bigger projects that bring it all together |
 
-## Principles used throughout
+## The habits this guide teaches
 
-| Principle | In practice |
+| Habit | What it looks like |
 |---|---|
-| **Security first** | No secrets in Git, SSH keys with passphrases, 2FA everywhere, least-privilege access |
-| **Cost aware** | Budgets and alerts before creating cloud resources, and everything torn down after use |
-| **Verify, don't assume** | Every change is checked, for example with `git status`, `ls` or `terraform plan` |
-| **Understand before running** | Every command is explained before you use it |
-| **AI as a tool, not a crutch** | AI can help explain and draft, but you check its work and make the decisions |
+| **Security first** | Secrets never go in Git. SSH keys have passphrases. 2FA is on everywhere. |
+| **Watch the cost** | Budget alerts go on before you build anything in the cloud, and everything gets cleaned up afterwards. |
+| **Check, don't assume** | After every change, check it worked (`git status`, `ls`, `terraform plan`). |
+| **Understand before you run** | If you can't say what a command does, don't run it yet. |
+| **AI is a helper, not a crutch** | AI can explain and draft, but you check its work and make the decisions. |
 
-## Setup used in these guides
+## What you'll need
 
-- macOS on Apple Silicon (most steps also work on Intel Macs and Linux)
-- zsh, Homebrew, Git, AWS CLI v2, Terraform, jq, VS Code
+- A Mac (most steps also work on Linux)
+- About 10–15 hours a week
+- A free GitHub account
+- An AWS account (from Stage 2). Early guides cost **£0**. Any guide that costs money says so at the start and shows you how to clean up.
 
-## Cost
+## Repo layout
 
-Early guides cost **£0**. Guides that create AWS resources say so clearly at the start, explain the likely cost, and show you how to clean up afterwards.
-
----
-
-## About the author
-
-Written by **Danial Bahri**, a UK-based IT professional moving from first-line support into cloud engineering. Each guide is based on hands-on work, including the real problems hit along the way and how they were fixed.
-
-Open to junior Cloud Engineer, Cloud Support and Infrastructure roles (UK or remote).
+```
+.
+├── README.md            ← you are here
+├── CLAUDE.md            ← rules for the AI assistant in this repo
+├── .claude/
+│   └── settings.json    ← locks that stop the AI touching secrets
+├── .gitignore           ← files Git must never save
+└── docs/
+    ├── day-01-...md     ← daily guides
+    ├── day-02-...md
+    ├── reference.md     ← commands and jargon
+    └── how-ai-is-used.md
+```
