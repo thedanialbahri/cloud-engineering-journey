@@ -1,7 +1,6 @@
 # Day 1: Terminal, Permissions, Homebrew and jq
 
-> Part of my 12-month journey to becoming a junior Cloud Engineer (AWS, Terraform, automation).
-> Written so a complete beginner can follow along and copy what I did.
+> Written so a complete beginner can follow along on their own machine.
 
 **Time needed:** about 1.5–2 hours
 **Cost:** £0 (nothing runs in the cloud today)

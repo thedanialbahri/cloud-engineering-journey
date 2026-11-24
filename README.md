@@ -1,36 +1,69 @@
-# Cloud Engineering Journey
+# Cloud Engineering: A Hands-On Guide from Zero
 
-Hands-on record of my path from first-line IT support to **junior Cloud Engineer**.
-I'm building real infrastructure on **AWS** with **Terraform** and automating it with **Bash, Python and GitHub Actions**, and documenting every step so others can follow along.
+A step-by-step, beginner-friendly guide to the core skills of a **junior Cloud Engineer**: the terminal, Git, **AWS**, **Terraform** and **automation** with Bash, Python and GitHub Actions.
 
-## About me
-- Background in first-line IT support (troubleshooting, users, systems)
-- Based in the UK, open to remote roles
-- Learning 10–15 hours a week on a structured 12-month plan
+Every guide is written so you can **follow along on your own machine**, with plain-English explanations of what each command does and why it matters.
 
-## How I work
-- **Security first:** no secrets in Git, SSH keys with passphrases, 2FA everywhere, least-privilege access
-- **Cost aware:** budgets and alerts before creating cloud resources, and everything is torn down after use
-- **Verify, don't assume:** every change is checked and the result recorded
-- **Documented:** each day has a beginner-friendly guide in `docs/`
+---
+
+## Who this is for
+
+- Beginners moving into cloud from IT support, helpdesk or another career
+- Anyone who wants to learn by **doing**, not just watching videos
+- People who want to understand **why** a command works, not just copy it
+
+No prior cloud experience is needed.
+
+## How to use this repo
+
+1. Start with **Day 1** and work through the guides in order. Each one builds on the last.
+2. Type the commands yourself rather than copying and pasting. It sticks better.
+3. Read the output after every command. The answer (or the error) is usually right there.
+4. Try the **challenges** before opening the answers.
+
+## Guides
+
+| # | Guide | What you'll learn |
+|---|---|---|
+| 1 | [Terminal, Permissions, Homebrew and jq](docs/day-01-terminal-homebrew-jq.md) | Terminal basics, reading file permissions, installing tools, working with JSON |
+| 2 | [Git, GitHub and SSH](docs/day-02-git-github-ssh.md) | Commits, branches, pull requests, securing GitHub, SSH keys, `.gitignore` |
+
+More guides are added as the programme progresses.
 
 ## Roadmap
-| Months | Focus |
+
+| Stage | Focus |
 |---|---|
-| 1–2 | Linux, networking, Git, cloud fundamentals |
-| 3–4 | AWS compute, storage, networking, IAM, security |
-| 5–6 | Terraform: modules, state, repeatable deployments |
-| 7–8 | Python, Bash, APIs, GitHub Actions, CI/CD |
-| 9–10 | Docker, monitoring, logging, resilience |
-| 11–12 | End-to-end capstone projects |
+| 1 | Linux, networking, Git, cloud fundamentals |
+| 2 | AWS compute, storage, networking, IAM and security |
+| 3 | Terraform: modules, state, repeatable deployments |
+| 4 | Python, Bash, APIs, GitHub Actions and CI/CD |
+| 5 | Docker, monitoring, logging and resilience |
+| 6 | End-to-end projects that bring it all together |
 
-## Progress
-- [x] Day 1: Terminal, Homebrew and jq
-- [x] Day 2: Git, GitHub and SSH key setup
-- [ ] Project 1: Engineering workstation (in progress)
+## Principles used throughout
 
-## Repo layout
-- `docs/` - day-by-day learning guides
+| Principle | In practice |
+|---|---|
+| **Security first** | No secrets in Git, SSH keys with passphrases, 2FA everywhere, least-privilege access |
+| **Cost aware** | Budgets and alerts before creating cloud resources, and everything torn down after use |
+| **Verify, don't assume** | Every change is checked, for example with `git status`, `ls` or `terraform plan` |
+| **Understand before running** | Every command is explained before you use it |
+| **AI as a tool, not a crutch** | AI can help explain and draft, but you check its work and make the decisions |
 
-## Tools
-macOS · zsh · Git · GitHub · AWS CLI · Terraform · jq · VS Code
+## Setup used in these guides
+
+- macOS on Apple Silicon (most steps also work on Intel Macs and Linux)
+- zsh, Homebrew, Git, AWS CLI v2, Terraform, jq, VS Code
+
+## Cost
+
+Early guides cost **£0**. Guides that create AWS resources say so clearly at the start, explain the likely cost, and show you how to clean up afterwards.
+
+---
+
+## About the author
+
+Written by **Danial Bahri**, a UK-based IT professional moving from first-line support into cloud engineering. Each guide is based on hands-on work, including the real problems hit along the way and how they were fixed.
+
+Open to junior Cloud Engineer, Cloud Support and Infrastructure roles (UK or remote).
