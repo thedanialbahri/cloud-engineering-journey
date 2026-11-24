@@ -17,9 +17,7 @@
       "Bash(* ~/.ssh*)",
       "Bash(* ~/.aws*)",
       "Bash(* $HOME/.ssh*)",
-      "Bash(* $HOME/.aws*)",
-      "Bash(* /Users/danialbahri/.ssh*)",
-      "Bash(* /Users/danialbahri/.aws*)"
+      "Bash(* $HOME/.aws*)"
     ]
   }
 }
