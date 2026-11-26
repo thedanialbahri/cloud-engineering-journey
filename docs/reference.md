@@ -1,6 +1,8 @@
 # Commands and Jargon Reference
 
-Every command and term used in this guide so far, explained simply. Come back here whenever you see a word you don't recognise.
+Every command and term used in this guide so far, explained simply. Think of it as a **command library**: come back here whenever you need a command again, or see a word you don't recognise.
+
+Commands are grouped by topic, not by day. New commands are added here as each guide is written.
 
 **Tip:** press `Cmd + F` (or `Ctrl + F`) to search this page.
 
@@ -12,6 +14,7 @@ Every command and term used in this guide so far, explained simply. Come back he
 - [Files and folders](#files-and-folders)
 - [Permissions](#permissions)
 - [Finding things](#finding-things)
+- [Shell settings: zsh and .zshrc](#shell-settings-zsh-and-zshrc)
 - [Homebrew](#homebrew)
 - [JSON and jq](#json-and-jq)
 - [The nano editor](#the-nano-editor)
@@ -23,6 +26,8 @@ Every command and term used in this guide so far, explained simply. Come back he
 - [Security words](#security-words)
 - [Claude Code and AI safety](#claude-code-and-ai-safety)
 - [Cloud and Terraform words](#cloud-and-terraform-words)
+- [AWS CLI commands](#aws-cli-commands) (coming soon)
+- [Terraform commands](#terraform-commands) (coming soon)
 
 ---
 
@@ -48,11 +53,25 @@ Every command and term used in this guide so far, explained simply. Come back he
 | `cd ~` | Goes straight to your home folder | Like pressing "Home" |
 | `echo text` | Prints text | `echo hello` → `hello` |
 | `echo $SHELL` | Shows which shell you're using | → `/bin/zsh` |
+| `echo $PATH` | Shows your PATH: the folders checked for commands, in order, split by `:` | → `/opt/homebrew/bin:/usr/bin:...` |
 | `uname -m` | Shows your chip type | `arm64` = Apple Silicon |
+| `sw_vers` | Shows your macOS version | → `ProductVersion: 15.1` |
+| `tool --version` | Checks a tool is installed and shows its version | `git --version`, `jq --version` |
+| `tool --help` / `man tool` | Shows the built-in help for a tool. In `man`, press `q` to quit. | `jq --help`, `man ls` |
 | `cmd1 && cmd2` | Runs the second command **only if** the first worked | `mkdir lab && cd lab` |
 | `cmd1 \| cmd2` | A **pipe**: sends the output of one command into another | `echo '{"a":1}' \| jq .a` |
 | `cmd > file` | Writes the output into a file, **replacing** what's there | `echo hello > test.txt` |
+| `cmd >> file` | Adds the output to the **end** of a file, keeping what's there | `echo world >> test.txt` |
 | `rehash` | Makes zsh forget where it last found commands and look again | Use after installing a new version of a tool |
+
+**`>` vs `>>`** — get this wrong and you can wipe a file.
+
+| Symbol | What it does | Real-life example |
+|---|---|---|
+| `>` | **Replaces** the whole file with the new text | Tearing out every page of a notebook and writing one new line |
+| `>>` | **Adds** the new text to the end | Writing a new line at the bottom of the page |
+
+**Tip:** before using `>` or `>>` on an important file, make a backup with `cp` (see [Files and folders](#files-and-folders)).
 
 ---
 
@@ -61,17 +80,29 @@ Every command and term used in this guide so far, explained simply. Come back he
 | Command | What it does | Example | Real-life example |
 |---|---|---|---|
 | `ls` | Lists what's in a folder | `ls` | Looking around a room |
+| `ls folder` | Lists what's in **another** folder, without moving into it | `ls docs` | Peeking into the next room from the doorway |
+| `ls -l file` | Shows details (permissions, owner, size, date) for one file | `ls -l test.txt` | Reading the label on one box |
 | `ls -la` | Lists **everything**, including hidden files, with details | `ls -la` | Opening every drawer too |
 | `mkdir name` | Makes a folder | `mkdir docs` | Getting a new box |
 | `mkdir -p a/b` | Makes a folder **and** any missing folders above it | `mkdir -p ~/projects/my-repo` | Building the shelf and the box in one go |
 | `cat file` | Shows what's inside a file | `cat README.md` | Reading a page out loud |
 | `cp from to` | **Copies** a file (you end up with two) | `cp notes.md docs/` | Photocopying a page |
+| `cp file file.backup` | Makes a backup copy next to the original, before you change it | `cp ~/.zshrc ~/.zshrc.backup` | Photocopying a form before you fill it in |
 | `mv from to` | **Moves** a file, or renames it (you end up with one) | `mv old.md new.md` | Moving a page to a new folder |
 | `rm -rf path` | Deletes a folder and everything in it. **No undo, no bin.** | `rm -rf ~/old-folder` | A shredder. Check twice with `pwd` and `ls` first. |
 
 **`-r`** = recursive (everything inside too). **`-f`** = force (don't ask).
 
+**Undo a backup change:** if you break a file, copy the backup back over it: `cp ~/.zshrc.backup ~/.zshrc`.
+
 **Case-sensitive** means capital letters matter. Your Mac treats `readme.md` and `README.md` as the **same** file. Linux (which cloud servers run on) treats them as **different** files. Always use the exact name.
+
+**Fixing the case of a file name on a Mac:** rename it in two steps, through a temporary name, so the Mac notices the change.
+
+```
+mv readme.md temp.md
+mv temp.md README.md
+```
 
 ---
 
@@ -108,12 +139,69 @@ d    rwx    r-x    r-x
 
 | Command | What it does | Example |
 |---|---|---|
-| `which tool` | Shows **which copy** of a tool runs when you type its name | `which jq` → `/opt/homebrew/bin/jq` |
-| `which -a tool` | Shows **every** copy, in the order they're checked. The first one wins. | `which -a jq` |
+| `which tool` | Shows **which copy** of a tool runs when you type its name | `which brew` → `/opt/homebrew/bin/brew` |
+| `which -a tool` | Shows **every** copy, in the order they're checked. The first one wins. | `which -a jq`, `which -a brew` |
 | `mdfind -name text` | Searches your Mac by file name (uses Spotlight) | `mdfind -name day-01` |
 | `git rev-parse --show-toplevel` | Shows the top folder of the Git repo you're in | Works from any folder inside the repo |
 
 **Remember:** a search word isn't a path. `mdfind` prints the full path, and that's what you give to `cp` or `mv`.
+
+**Same path listed twice?** If `which -a brew` shows `/opt/homebrew/bin/brew` **twice**, it's the same copy, but that folder is in your PATH twice. It's harmless, but messy. The fix is `typeset -U path` (see [Shell settings](#shell-settings-zsh-and-zshrc)).
+
+---
+
+## Shell settings: zsh and .zshrc
+
+**`~/.zshrc`** is a hidden settings file in your home folder. zsh reads it **every time you open a new terminal window**. Real-life example: a **morning checklist** your shell follows before it starts work.
+
+| Command | What it does | Example | Real-life example |
+|---|---|---|---|
+| `cat ~/.zshrc` | Shows what's in your settings file | `cat ~/.zshrc` | Reading the checklist |
+| `nano ~/.zshrc` | Opens the settings file to edit by hand | `nano ~/.zshrc` | Rewriting the checklist with a pen |
+| `cp ~/.zshrc ~/.zshrc.backup` | Backs up the settings file before you change it | Do this first, every time | Photocopying the checklist first |
+| `echo "line" >> ~/.zshrc` | Adds one line to the **end** of the settings file. Use `>>`, never `>`. | `echo "typeset -U path" >> ~/.zshrc` | Adding one item to the bottom of the checklist |
+| `source ~/.zshrc` | Re-reads the settings file **now**, so changes work in this window | Run after every change | Re-reading the checklist after updating it, instead of waiting until tomorrow |
+| `typeset -U path` | Tells zsh to keep only **one** copy of each folder in PATH. `-U` = unique. `path` (small letters) is zsh's list version of `PATH`. | Put it in `~/.zshrc` | Crossing out duplicate shops on your shopping route |
+
+**Safe routine for changing `~/.zshrc`:**
+
+```
+cp ~/.zshrc ~/.zshrc.backup      # 1. back up
+echo "typeset -U path" >> ~/.zshrc  # 2. add a line
+cat ~/.zshrc                     # 3. check it looks right
+source ~/.zshrc                  # 4. load it
+```
+
+### Aliases (shortcuts)
+
+An **alias** is a short nickname for a longer command. Real-life example: saving a contact as **"Mum"** instead of typing the full phone number every time.
+
+| Command | What it does |
+|---|---|
+| `alias gs='git status'` | Makes `gs` mean `git status`, **in this window only** |
+| `echo "alias gs='git status'" >> ~/.zshrc` | Saves the alias in your settings file, so it works in **every** new window |
+| `alias` | Lists all the aliases you have |
+
+**Why two kinds of quote marks?** The outer `"double quotes"` wrap the whole line for `echo`. The inner `'single quotes'` wrap the command the alias stands for. If you used the same kind for both, the shell would get confused about where each one ends.
+
+**Aliases used in this guide:**
+
+| Alias | Stands for | What it does |
+|---|---|---|
+| `gs` | `git status` | Shows what's changed |
+| `ga` | `git add` | Stages files, e.g. `ga docs` |
+| `gl` | `git log --oneline` | Shows the commit history, one line each |
+
+To add all three:
+
+```
+echo "alias gs='git status'" >> ~/.zshrc
+echo "alias ga='git add'" >> ~/.zshrc
+echo "alias gl='git log --oneline'" >> ~/.zshrc
+source ~/.zshrc
+```
+
+Test them with `gs` and `gl` inside a Git repo.
 
 ---
 
@@ -222,13 +310,14 @@ edit  →  git add  →  git commit  →  git push
 
 | Command | What it does | Example |
 |---|---|---|
+| `git --version` | Checks Git is installed | → `git version 2.x` |
 | `git init` | Turns a folder into a Git repo | Run once per project |
 | `git status` | Shows what's going on: changed files, branch, anything waiting. **Safe to run any time.** | Run it before and after everything |
 | `git add file` | Stages a file (puts it on the ready-to-save list) | `git add README.md` |
 | `git add folder` | Stages everything in a folder | `git add docs` |
 | `git commit -m "msg"` | Saves a snapshot with a message | `git commit -m "Add Day 1 guide"` |
 | `git log --oneline` | Lists commits, one per line, newest first | |
-| `git switch -c name` | **C**reates a new branch and moves onto it | `git switch -c add-new-guide` |
+| `git switch -c branch-name` | **C**reates a new branch and moves onto it | `git switch -c add-new-guide` |
 | `git switch name` | Moves to an existing branch | `git switch main` |
 | `git branch` | Lists branches. `*` shows where you are. | |
 | `git branch -d name` | **D**eletes a finished branch. Warns you if its work isn't merged. | `git branch -d add-new-guide` |
@@ -238,6 +327,23 @@ edit  →  git add  →  git commit  →  git push
 | `git push -u origin branch` | Sends a branch to GitHub | |
 | `git pull` | Downloads new commits from GitHub | |
 | `git config --global user.email "x"` | Sets the email on your commits | Use your GitHub noreply email |
+| `git config --global user.email` | Shows the email currently set (no value = just check) | |
+
+**Shortcuts:** `gs`, `ga` and `gl` save typing for the Git commands you use most. See [Aliases](#aliases-shortcuts).
+
+**The everyday branch routine:**
+
+```
+git switch main
+git pull                          # get the latest main
+git switch -c add-new-guide       # new branch for your work
+# ...edit files...
+git add docs
+git commit -m "Add new guide"
+git push -u origin add-new-guide  # then open a pull request on GitHub
+```
+
+After the pull request is merged on GitHub: `git switch main`, `git pull`, then `git branch -d add-new-guide`.
 
 **Reading Git's messages:**
 
@@ -285,12 +391,15 @@ edit  →  git add  →  git commit  →  git push
 
 | Command | What it does |
 |---|---|
+| `ls -la ~/.ssh` | Lists your SSH files and their permissions. The private key should be `-rw-------`. |
 | `ssh-keygen -t ed25519 -C "label"` | Makes a new key pair. `-t` = type, `-C` = label. |
 | `ssh-keygen -c -C "new label" -f file` | **C**hanges the label on an existing key |
 | `ssh-keygen -y -f file` | Asks for the passphrase if one is set. A good way to check you set one. |
 | `ssh -T git@github.com` | Tests the connection to GitHub. Success: `Hi username!` |
 | `ssh-add --apple-use-keychain file` | Gives the key to the agent and saves the passphrase in Keychain |
 | `ssh-add -l` | **L**ists keys the agent is holding |
+| `nano ~/.ssh/config` | Opens the SSH settings file to edit |
+| `pbcopy < ~/.ssh/id_ed25519.pub` | Copies the **public** key to paste into GitHub. Never do this with the private key. |
 
 ---
 
@@ -338,3 +447,15 @@ These come up properly in later guides. For now, just know what they are.
 | **State file** (`.tfstate`) | Terraform's record of what it built. Can contain secrets. Never commit it. | The receipt for everything you bought |
 | **`.tfvars`** | Terraform settings files. Sometimes contain secrets. | Your shopping list with your card number on it |
 | **`.env`** | A file of settings that often includes passwords | A sticky note with passwords on it |
+
+---
+
+## AWS CLI commands
+
+Coming soon. AWS commands are added here once the guide reaches AWS (after budget alerts are set up, so nothing costs money by surprise).
+
+---
+
+## Terraform commands
+
+Coming soon. Terraform commands are added here once the guide reaches Terraform.
